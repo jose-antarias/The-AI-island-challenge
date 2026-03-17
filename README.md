@@ -11,7 +11,7 @@ Este repositorio contiene el **minijuego de aventura gráfica interactiva** que 
 ## 📌 Características principales
 
 *   **Diseño retro y motor SCUMM:** Interfaz clásica inspirada en *Monkey Island*, con panel de verbos (Mirar, Usar, Hablar a, Ir a...) y un sistema de inventario totalmente funcional.
-*   **Puzles normativos:** 4 niveles de juego basados directamente en los niveles de riesgo del RIA (Mínimo, Limitado, Alto e Inadmisible).
+*   **Puzles normativos:** 4 niveles de juego basados directamente en los niveles de riesgo del RIA (Mínimo, Limitado, Alto e Inaceptable).
 *   **Totalmente autocontenido:** Toda la lógica, gráficos (SVG inline), diálogos y animaciones están empaquetados en un **único archivo HTML**, garantizando un despliegue y portabilidad inmediatos.
 *   **Experiencia inmersiva y accesible:** 
     *   Uso integrado de **CSS3** para animaciones precisas (efectos de lava, barreras láser, movimiento del personaje).
@@ -24,8 +24,8 @@ Este proyecto es un caso práctico en el que quería probar mis habilidades en *
 
 1.  **Ideación y prototipado inicial:** Interacción con modelos generativos para diseñar la arquitectura SCUMM en Vanilla JavaScript y definir los puzles legales del minijuego.
 2.  **Arquitectura y desarrollo HTML/JS:** Refactorización dinámica del código para asegurar que todo (incluidos los gráficos en SVG) quedara incrustado en un solo archivo, sin dependencias externas.
-3.  **Auditoría y precisión jurídica:** Revisión profunda del *lore* del juego utilizando a modelos como **Claude 3** para contrastar las afirmaciones de los personajes con el texto real del RIA y las guías de la AESIA, ajustando los diálogos para mantener el rigor sin perder el humor.
-4.  **Debugging continuo de mecánicas (UX):** Resolución de fricciones de jugabilidad (bloqueo de movimiento, avance de diálogos, verbo "Ir a") debugeando iterativamente el motor SCUMM con agentes de IA.
+3.  **Auditoría y precisión jurídica:** Revisión profunda del *lore* del juego utilizando a modelos como **Claude Sonet 4.6** para contrastar las afirmaciones de los personajes con el texto real del RIA y las guías de la AESIA, ajustando los diálogos para mantener el rigor sin perder el humor.
+4.  **Debugging continuo de mecánicas (UX):** Resolución de fricciones de jugabilidad (bloqueo de movimiento, avance de diálogos,) debugeando iterativamente el motor SCUMM con agentes de IA.
 
 ## 🛠️ Stack tecnológico
 
@@ -50,9 +50,9 @@ Para ejecutar este proyecto en tu entorno local, al ser un archivo autocontenido
 
 ## 👨‍💻 Autor
 
-# Hola, soy Jose Antonio Arias Lombardero 👋
+**Jose Antonio Arias Lombardero**
 *Experto en Inteligencia Artificial aplicada al sector público, innovación, contratación y fondos europeos.*
 
-Esta aplicación forma parte de un portfolio de soluciones tecnológicas conceptualizadas, desarrolladas y desplegadas para su aplicación y divulgación. Mi objetivo es demostrar cómo el uso estratégico de modelos avanzados de IA (Vibe Coding) puede escalar radicalmente la digitalización, la operatividad y la alfabetización tecnológica de la Administración y la ciudadanía.
+Esta aplicación forma parte de un portfolio de soluciones tecnológicas conceptualizadas, desarrolladas y desplegadas en entornos cloud para su aplicación en el sector público. Mi objetivo es demostrar cómo el uso estratégico de modelos avanzados de IA (Vibe Coding) puede escalar radicalmente la digitalización, la operatividad y la alfabetización tecnológica de la Administración.
 
 🔗 [Consulta mi portfolio completo de aplicaciones y trayectoria profesional](https://ja-lombardero.vercel.app/)
