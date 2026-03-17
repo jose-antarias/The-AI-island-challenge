@@ -20,6 +20,15 @@ Este repositorio contiene el **minijuego de aventura gráfica interactiva** que 
     *   Sistema de diálogos interactivos que el usuario puede avanzar con clics fluidos.
 *   **Rigor legal:** Adaptación lúdica pero fiel de artículos clave (Art. 5, Art. 10, Art. 50) y referencias a la guía de gestión de riesgos de la **AESIA**.
 
+## 🗺️ Hoja de ruta
+
+| Estado | Versión | Descripción |
+| :---: | :--- | :--- |
+| ✅ | **v1.0 — Actual** | Motor SCUMM completo con gráficos SVG originales autocontenidos en un único HTML. |
+| 🔜 | **v2.0 — En desarrollo** | Rediseño visual con sprites pixel art de nueva creación, inspirados en la estética de las aventuras gráficas clásicas de los 90, para sustituir los gráficos vectoriales actuales por ilustraciones de mayor fidelidad artística. |
+
+> 🎨 Los gráficos de la v2.0 serán diseños originales creados específicamente para este proyecto, inspirados en el estilo visual de las aventuras gráficas de LucasArts, sin utilizar assets protegidos por copyright de ningún juego comercial.
+
 ## 🤖 Desarrollo asistido por IA (Vibe Coding)
 
 Este proyecto es un caso práctico en el que quería probar mis habilidades en **AI-Driven Development**. Todo el ciclo de vida del software, desde la conceptualización hasta el debugging, ha sido orquestado dirigiendo estratégicamente a modelos de IA avanzados:
