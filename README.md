@@ -24,7 +24,7 @@ Este proyecto es un caso práctico en el que quería probar mis habilidades en *
 
 1.  **Ideación y prototipado inicial:** Interacción con modelos generativos para diseñar la arquitectura SCUMM en Vanilla JavaScript y definir los puzles legales del minijuego.
 2.  **Arquitectura y desarrollo HTML/JS:** Refactorización dinámica del código para asegurar que todo (incluidos los gráficos en SVG) quedara incrustado en un solo archivo, sin dependencias externas.
-3.  **Auditoría y precisión jurídica:** Revisión profunda del *lore* del juego utilizando a modelos como **Claude Sonet 4.6** para contrastar las afirmaciones de los personajes con el texto real del RIA y las guías de la AESIA, ajustando los diálogos para mantener el rigor sin perder el humor.
+3.  **Auditoría y precisión jurídica:** Revisión profunda del *lore* del juego utilizando a modelos como **Claude Sonnet 4.6** para contrastar las afirmaciones de los personajes con el texto real del RIA y las guías de la AESIA, ajustando los diálogos para mantener el rigor sin perder el humor.
 4.  **Debugging continuo de mecánicas (UX):** Resolución de fricciones de jugabilidad (bloqueo de movimiento, avance de diálogos,) debugeando iterativamente el motor SCUMM con agentes de IA.
 
 ## 🛠️ Stack tecnológico
