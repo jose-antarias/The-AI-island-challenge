@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Island Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --scumm-bg: #000;
+            --scumm-verb-idle: #00AA00;
+            --scumm-verb-hover: #55FF55;
+            --scumm-text: #00FFFF;
+            --guybrush-color: #DDDDDD;
+            --lechuck-color: #55FF55;
+            --system-color: #AAAAAA;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        body {
+            margin: 0;
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 800px;
+            height: 500px;
+            background: var(--scumm-bg);
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #222;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        /* ==========================================
+           PANTALLA DE INTRODUCCIÓN (DUELO EN BARCO)
+           ========================================== */
+        #intro-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #050a1f 0%, #1a153a 60%, #000000 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            transition: opacity 1.5s ease-in-out;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .moon {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fffdf0 0%, #d4d0b4 70%, #8a8775 100%);
+            box-shadow: 0 0 80px rgba(255, 255, 200, 0.4), inset -20px -20px 40px rgba(0,0,0,0.5);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .ship-scene {
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            height: 60%;
+            left: -10%;
+            transform-origin: bottom center;
+            animation: rock-boat 4s ease-in-out infinite alternate;
+            z-index: 5;
+        }
+
+        @keyframes rock-boat {
+            0% { transform: rotate(-2deg) translateY(5px); }
+            100% { transform: rotate(2deg) translateY(-5px); }
+        }
+
+        .ship-deck {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: repeating-linear-gradient(90deg, #1f1209, #1f1209 20px, #110904 20px, #110904 22px);
+            border-top: 6px solid #3e2723;
+            box-shadow: inset 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .mast {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            width: 20px;
+            height: 300px;
+            background: linear-gradient(to right, #1f1209, #3e2723);
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+        .sail {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            width: 300px;
+            height: 40px;
+            background: #222;
+            transform: translateX(-50%);
+            border-radius: 50% 50% 0 0;
+            z-index: -1;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.8);
+        }
+
+        .duel-character {
+            position: absolute;
+            bottom: 60px;
+            width: 120px;
+            height: 240px;
+        }
+
+        .guybrush-duel { left: 25%; filter: drop-shadow(-5px 5px 10px rgba(0,0,0,0.8)); }
+        .lechuck-duel { right: 25%; filter: drop-shadow(5px 5px 15px rgba(85, 255, 85, 0.4)); }
+
+        .sword-clash {
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ffffff 0%, #ffff00 40%, transparent 80%);
+            animation: pulse-spark 0.1s infinite alternate;
+            z-index: 10;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes pulse-spark {
+            0% { transform: translateX(-50%) scale(0.8); opacity: 0.8; }
+            100% { transform: translateX(-50%) scale(1.5); opacity: 1; }
+        }
+
+        .title-container {
+            position: relative;
+            z-index: 20;
+            margin-top: 40px;
+            pointer-events: none;
+        }
+
+        .title-main {
+            font-size: 45px;
+            color: #33CC33;
+            text-shadow: 2px 2px 0 #008800, 4px 4px 0 #006600, 6px 6px 0 #004400, 8px 8px 0 #002200, 10px 10px 15px rgba(0,0,0,0.9);
+            margin: 0;
+            letter-spacing: -2px;
+        }
+
+        .title-sub {
+            font-size: 38px;
+            color: #FF33CC;
+            text-shadow: 2px 2px 0 #660044, 4px 4px 0 #330022, 6px 6px 15px rgba(0,0,0,0.9);
+            margin: 0;
+            margin-top: 10px;
+        }
+
+        .blink-text {
+            position: absolute;
+            bottom: 30px;
+            font-size: 14px;
+            color: #00FFFF;
+            animation: blinker 1.5s linear infinite;
+            z-index: 20;
+            text-shadow: 2px 2px 0 #000;
+            width: 100%;
+            text-align: center;
+        }
+
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* REGLAMENTO OCULTO */
+        #rules-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: #FFFF55;
+            cursor: pointer;
+            z-index: 110;
+            text-shadow: 2px 2px 0 #000;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        #rules-btn:hover { opacity: 1; }
+
+        #rules-modal {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background: rgba(5, 10, 31, 0.95);
+            border: 4px solid #33CC33;
+            z-index: 120;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #FFF;
+            text-align: left;
+            box-shadow: 0 0 30px #000;
+            overflow-y: auto;
+        }
+
+        .rule-title { color: #FF33CC; font-size: 14px; margin-bottom: 15px; text-align: center; text-shadow: 2px 2px 0 #000; }
+        .rule-text { font-size: 9px; line-height: 1.8; margin-bottom: 10px; width: 100%; text-shadow: 1px 1px 0 #000; }
+        .rule-color-red { color: #FF5555; }
+        .rule-color-orange { color: #FFAA00; }
+        .rule-color-yellow { color: #FFFF55; }
+        .rule-color-green { color: #55FF55; }
+        
+        #close-rules {
+            margin-top: 15px;
+            color: #FF88FF;
+            cursor: pointer;
+            font-size: 14px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        #close-rules:hover { color: #FFF; }
+
+        /* ==========================================
+           PANTALLA DE JUEGO (SCUMM ENGINE)
+           ========================================== */
+        #game-screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        #viewport {
+            width: 100%;
+            height: 65%;
+            position: relative;
+            background: linear-gradient(to bottom, #1a0b2e 0%, #2a1b40 40%, #15202b 60%, #0d131a 100%);
+            overflow: hidden;
+        }
+
+        /* Fondos de escena */
+        #scene-1, #scene-2, #scene-3, #scene-4 {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+        }
+        #scene-2 { display: none; background: #1a1a1a; }
+        #scene-3 { display: none; background: #0f141e; }
+        #scene-4 { display: none; background: #2a0b0b; }
+
+        /* Suelos y Paredes */
+        .wood-floor {
+            position: absolute; bottom: 0; width: 100%; height: 40px;
+            background: repeating-linear-gradient(90deg, #3e2723, #3e2723 38px, #1f1209 38px, #1f1209 40px);
+            border-top: 2px solid #5d4037;
+        }
+        .stone-floor {
+            position: absolute; bottom: 0; width: 100%; height: 40px;
+            background: repeating-linear-gradient(90deg, #222, #222 40px, #111 40px, #111 42px);
+            border-top: 2px solid #444;
+        }
+        .stone-wall {
+            position: absolute; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                repeating-linear-gradient(0deg, #333, #333 38px, #222 38px, #222 40px),
+                repeating-linear-gradient(90deg, transparent, transparent 58px, #222 58px, #222 60px);
+        }
+        .iron-bars {
+            position: absolute; width: 100%; height: 100%;
+            background: repeating-linear-gradient(90deg, transparent, transparent 100px, #111 100px, #050505 110px);
+            z-index: 1;
+        }
+        .lava-floor {
+            position: absolute; bottom: 0; width: 100%; height: 40px;
+            background: repeating-linear-gradient(90deg, #500, #500 20px, #f50 22px, #300 25px);
+            border-top: 2px solid #f00;
+            box-shadow: 0 -10px 20px rgba(255,0,0,0.5);
+            animation: lava-flow 3s infinite alternate;
+        }
+        @keyframes lava-flow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.5); }
+        }
+
+        .entity { position: absolute; cursor: pointer; transition: filter 0.2s; z-index: 5; }
+        .entity:hover { filter: brightness(1.2) drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+        /* Entidades Escena 1 */
+        #door { width: 120px; height: 180px; bottom: 30px; right: 120px; }
+        #receptionist { width: 80px; height: 140px; bottom: 30px; right: 250px; }
+        #board { width: 80px; height: 100px; bottom: 100px; left: 80px; }
+        
+        /* Entidades Escena 2 */
+        #hr-skull { width: 100px; height: 120px; bottom: 80px; left: 400px; }
+        #desk { width: 160px; height: 60px; bottom: 30px; left: 370px; background: #3e2723; border: 2px solid #2a1008; border-radius: 5px; }
+        #data-book { width: 60px; height: 40px; bottom: 70px; left: 420px; }
+        #magic-barrier { width: 80px; height: 180px; bottom: 30px; right: 50px; opacity: 0.6; animation: barrier-pulse 2s infinite; }
+        #feather { width: 30px; height: 30px; bottom: 35px; left: 150px; }
+
+        /* Entidades Escena 3 */
+        #parrot { width: 60px; height: 90px; bottom: 100px; left: 300px; z-index: 6; }
+        #lever { width: 40px; height: 100px; bottom: 40px; left: 360px; z-index: 4; }
+        #safe { width: 100px; height: 100px; bottom: 40px; left: 550px; z-index: 5; }
+        #stamp { width: 30px; height: 30px; bottom: 60px; left: 585px; z-index: 6; display: none; }
+        #stairs { width: 60px; height: 120px; bottom: 30px; right: 30px; background: #111; border-left: 2px solid #333; z-index: 2; box-shadow: inset 20px 0 20px #000; }
+
+        /* Entidades Escena 4 */
+        #social-eye { width: 120px; height: 180px; bottom: 80px; left: 350px; transform-origin: bottom center; z-index: 4; }
+        #final-door { width: 140px; height: 200px; bottom: 30px; right: 80px; z-index: 3; }
+
+        @keyframes eye-pulse {
+            0% { filter: drop-shadow(0 0 10px #FF0000); }
+            100% { filter: drop-shadow(0 0 40px #FF0000); }
+        }
+
+        @keyframes barrier-pulse {
+            0% { filter: drop-shadow(0 0 10px #00FFFF); }
+            50% { filter: drop-shadow(0 0 30px #00FFFF); }
+            100% { filter: drop-shadow(0 0 10px #00FFFF); }
+        }
+
+        /* Guybrush */
+        #guybrush { width: 70px; height: 140px; bottom: 30px; left: 150px; transition: left 1s linear; z-index: 10; }
+
+        #dialogue-box {
+            position: absolute; top: 20px; left: 5%; width: 90%; text-align: center;
+            font-size: 14px; line-height: 1.5; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            pointer-events: auto; z-index: 20; cursor: pointer;
+        }
+
+        #sentence-line { height: 5%; background: var(--scumm-bg); color: var(--scumm-text); text-align: center; font-size: 14px; padding-top: 6px; }
+
+        #ui-panel { height: 30%; display: flex; border-top: 2px solid #555; background-color: #000; }
+        #verbs { flex: 0 0 45%; display: grid; grid-template-columns: repeat(3, 1fr); padding: 15px; gap: 10px; }
+        .verb { color: var(--scumm-verb-idle); font-size: 14px; cursor: pointer; text-align: left; }
+        .verb:hover, .verb.active { color: var(--scumm-verb-hover); }
+
+        #inventory { flex: 1; display: flex; flex-wrap: wrap; align-content: flex-start; padding: 15px; border-left: 2px solid #555; gap: 15px; overflow-y: auto; }
+        .inv-item { display: flex; flex-direction: column; align-items: center; color: #FF55FF; font-size: 10px; cursor: pointer; width: 80px; text-align: center; }
+        .inv-item svg { width: 40px; height: 40px; margin-bottom: 5px; }
+        .inv-item:hover { color: #FFFFFF; }
+        .inv-item:hover svg { filter: brightness(1.5); }
+
+        svg { shape-rendering: crispEdges; }
+
+        /* ==========================================
+           PANTALLA FINAL (CRÉDITOS / GRADUACIÓN)
+           ========================================== */
+        #credits-screen {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 200;
+            overflow: hidden;
+            border: 4px solid #55FF55;
+        }
+
+        /* SVG de Guybrush Graduado */
+        #grad-guybrush {
+            position: absolute;
+            bottom: -20px;
+            left: 20px;
+            width: 320px;
+            height: 320px;
+            z-index: 210;
+            filter: drop-shadow(0 0 20px rgba(85,255,85,0.4));
+        }
+
+        .credits-container {
+            position: absolute;
+            top: 100%; /* Inicia abajo del todo */
+            left: 360px; /* A la derecha de Guybrush */
+            width: calc(100% - 400px); /* Ocupa el resto del ancho con margen */
+            text-align: left; /* Alineación izquierda para facilitar lectura */
+            color: #FFF;
+            animation: scroll-credits 30s linear forwards; /* Un poco más lento */
+            z-index: 205;
+            padding-right: 20px;
+        }
+
+        @keyframes scroll-credits {
+            0% { top: 100%; }
+            100% { top: -250%; }
+        }
+
+        .cred-title { color: #FF33CC; font-size: 22px; margin-bottom: 30px; text-shadow: 2px 2px 0 #660044; text-align: center; }
+        .cred-text { font-size: 11px; line-height: 2.2; margin-bottom: 25px; color: #00FFFF; }
+        .cred-highlight { color: #55FF55; display: block; margin-bottom: 8px; font-size: 13px; text-shadow: 1px 1px 0 #000; }
+        .cred-level { font-size: 14px; margin-top: 40px; margin-bottom: 20px; color: #FFFF55; text-align: center; border-bottom: 2px dashed #FFFF55; padding-bottom: 10px; }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    
+    <!-- PANTALLA DE INTRODUCCIÓN -->
+    <div id="intro-screen">
+        <div class="moon"></div>
+        <div id="rules-btn">COMO JUGAR</div>
+        <div id="rules-modal">
+            <div class="rule-title">NIVELES DE RIESGO DE LA IA</div>
+            <div class="rule-text">Tu misión es auditar la isla resolviendo puzles basados en los 4 niveles de riesgo del Reglamento Europeo (RIA):</div>
+            <div class="rule-text"><span class="rule-color-red">■ INADMISIBLE (Prohibido):</span> IA que manipula o hace scoring social.</div>
+            <div class="rule-text"><span class="rule-color-orange">■ ALTO RIESGO (Control Estricto):</span> Uso en RRHH, biometría. Exige Gobernanza de Datos.</div>
+            <div class="rule-text"><span class="rule-color-yellow">■ LIMITADO (Transparencia):</span> Chatbots o deepfakes. Deben informar que son IA.</div>
+            <div class="rule-text"><span class="rule-color-green">■ MÍNIMO (Uso Libre):</span> Filtros de spam o videojuegos. Sin obligaciones.</div>
+            <div id="close-rules">[ ENTENDIDO ]</div>
+        </div>
+
+        <div class="title-container">
+            <h1 class="title-main">THE AI ISLAND</h1>
+            <h2 class="title-sub">CHALLENGE</h2>
+        </div>
+
+        <div class="ship-scene">
+            <div class="mast"></div><div class="sail"></div>
+            <div class="duel-character guybrush-duel">
+                <svg viewBox="0 0 32 64" width="100%" height="100%">
+                    <rect x="10" y="44" width="4" height="18" fill="#888"/><rect x="18" y="44" width="6" height="16" fill="#888"/>
+                    <rect x="8" y="60" width="6" height="4" fill="#4a3018"/><rect x="18" y="58" width="8" height="4" fill="#4a3018"/>
+                    <rect x="10" y="24" width="14" height="20" fill="#2020b0"/><rect x="14" y="24" width="6" height="8" fill="#fff"/>
+                    <rect x="12" y="10" width="12" height="8" fill="#e0b044"/><rect x="14" y="14" width="10" height="10" fill="#fcdcb4"/><rect x="22" y="16" width="2" height="2" fill="#000"/>
+                    <rect x="16" y="26" width="16" height="6" fill="#1a1a8a"/><rect x="32" y="26" width="4" height="4" fill="#fcdcb4"/>
+                    <rect x="34" y="27" width="28" height="2" fill="#ddd"/><rect x="34" y="24" width="2" height="8" fill="#666"/>
+                </svg>
+            </div>
+            <div class="sword-clash"></div>
+            <div class="duel-character lechuck-duel">
+                <svg viewBox="0 0 32 64" width="100%" height="100%">
+                    <rect x="18" y="46" width="6" height="16" fill="#444"/><rect x="8" y="48" width="6" height="14" fill="#444"/>
+                    <rect x="18" y="60" width="8" height="4" fill="#111"/><rect x="6" y="60" width="8" height="4" fill="#111"/>
+                    <rect x="8" y="22" width="18" height="24" fill="#8a2020"/><rect x="12" y="22" width="6" height="10" fill="#222"/>
+                    <rect x="10" y="14" width="14" height="10" fill="#7ba05b"/><rect x="8" y="20" width="16" height="6" fill="#111"/><rect x="12" y="16" width="2" height="2" fill="#ff0000"/>
+                    <rect x="4" y="8" width="26" height="6" fill="#111"/><rect x="8" y="4" width="16" height="4" fill="#111"/>
+                    <rect x="-2" y="26" width="14" height="6" fill="#5a1010"/><rect x="-6" y="26" width="4" height="4" fill="#7ba05b"/>
+                    <rect x="-30" y="27" width="26" height="2" fill="#bbb"/><rect x="-4" y="24" width="2" height="8" fill="#444"/>
+                </svg>
+            </div>
+            <div class="ship-deck"></div>
+        </div>
+        <p class="blink-text">HAZ CLICK EN LA PANTALLA PARA AUDITAR</p>
+    </div>
+
+    <!-- PANTALLA FINAL (CRÉDITOS Y GRADUACIÓN) -->
+    <div id="credits-screen">
+        <svg id="grad-guybrush" viewBox="0 0 48 48">
+            <!-- Birrete Universitario -->
+            <polygon points="24,2 8,8 24,14 40,8" fill="#111"/>
+            <rect x="14" y="8" width="20" height="6" fill="#222"/>
+            <line x1="24" y1="8" x2="38" y2="16" stroke="#ffcc00" stroke-width="1.5"/>
+            <circle cx="38" cy="16" r="1.5" fill="#ffcc00"/> <!-- Borla -->
+            
+            <!-- Cara Guybrush -->
+            <rect x="16" y="14" width="16" height="14" fill="#fcdcb4"/>
+            <rect x="14" y="12" width="20" height="4" fill="#e0b044"/> <!-- Pelo -->
+            <rect x="20" y="18" width="2" height="2" fill="#000"/> <!-- Ojo Izq -->
+            <rect x="26" y="18" width="2" height="2" fill="#000"/> <!-- Ojo Der -->
+            <rect x="22" y="24" width="4" height="1" fill="#aa6644"/> <!-- Boca -->
+
+            <!-- Cuerpo (Toga negra sobre abrigo) -->
+            <rect x="10" y="28" width="28" height="20" fill="#222"/>
+            <rect x="20" y="28" width="8" height="6" fill="#fff"/> <!-- Camisa -->
+
+            <!-- Pergamino con Sello de Lacre -->
+            <rect x="12" y="32" width="24" height="10" fill="#eee" transform="rotate(-10 24 36)"/>
+            <rect x="10" y="30" width="4" height="14" fill="#ccc" transform="rotate(-10 24 36)"/> <!-- Rollo Izq -->
+            <rect x="34" y="30" width="4" height="14" fill="#ccc" transform="rotate(-10 24 36)"/> <!-- Rollo Der -->
+            
+            <!-- Sello Lacre Rojo AESIA -->
+            <circle cx="24" cy="38" r="3" fill="#cc0000"/>
+            <circle cx="24" cy="38" r="2" fill="#ff2222"/>
+            <path d="M23,40 L21,46 L24,44 L27,46 L25,40 Z" fill="#aa0000"/>
+        </svg>
+
+        <div class="credits-container">
+            <div class="cred-title">¡CERTIFICACIÓN OBTENIDA!</div>
+            <div class="cred-text">Has superado el <span class="cred-highlight">AI Island Challenge</span>.</div>
+            <div class="cred-text">La fortaleza tecnológica de LeChuck ha sido auditada con éxito bajo el amparo de la legislación europea.</div>
+            
+            <div class="cred-level">--- REPASO DE TU AUDITORÍA ---</div>
+            
+            <div class="cred-text"><span class="cred-highlight">RIESGO MÍNIMO:</span> Derrotaste al Loro-Bot mediante &quot;Prompt Injection&quot;. Sin obligaciones de auditoría formal, la robustez técnica sigue siendo la diferencia entre un sistema útil y un loro con ansiedad existencial.</div>
+            
+            <div class="cred-text"><span class="cred-highlight">RIESGO LIMITADO:</span> Desenmascaraste al Recepcionista Esquelético. El Art. 50 lo deja claro: cuando una IA interactúa directamente con personas, debe identificarse como tal. El camuflaje humano no está incluido en las funcionalidades permitidas.</div>
+            
+            <div class="cred-text"><span class="cred-highlight">ALTO RIESGO:</span> Mitigaste el sesgo del Cráneo Evaluador de RRHH con Gobernanza de Datos (Art. 10). El RIA exige que los sistemas de alto riesgo minimicen sesgos activamente. La discriminación algorítmica no desaparece sola: hay que ir a buscarla al dataset.</div>
+            
+            <div class="cred-text"><span class="cred-highlight">RIESGO INADMISIBLE:</span> Clausuraste el Ojo de Scoring Social (Art. 5). La IA no puede usarse para manipular el comportamiento de las personas —ni por autoridades ni por piratas con ambiciones continentales— ni para puntuar a ciudadanos como si fueran personajes de videojuego. Salvo en videojuegos, claro.</div>
+            
+            <div class="cred-text" style="margin-top: 60px;">El Mar del Caribe vuelve a ser un lugar seguro para la humanidad.</div>
+            <div class="cred-title" style="font-size: 16px; margin-top: 20px;">LA AESIA TE SALUDA, EXPERTO.</div>
+        </div>
+    </div>
+
+    <!-- MOTOR SCUMM -->
+    <div id="game-screen">
+        <div id="viewport">
+            <div id="dialogue-box"></div>
+            
+            <!-- GUYBRUSH (Persiste entre escenas) -->
+            <div id="guybrush" class="entity" data-name="Guybrush">
+                <svg viewBox="0 0 16 30" width="100%" height="100%">
+                    <rect x="5" y="2" width="6" height="3" fill="#e0b044"/><rect x="4" y="4" width="8" height="2" fill="#e0b044"/>
+                    <rect x="6" y="5" width="5" height="5" fill="#fcdcb4"/><rect x="9" y="6" width="1" height="1" fill="#000"/>
+                    <rect x="7" y="10" width="3" height="6" fill="#fff"/><rect x="4" y="10" width="3" height="12" fill="#2020b0"/>
+                    <rect x="10" y="10" width="3" height="12" fill="#2020b0"/><rect x="5" y="12" width="2" height="6" fill="#1a1a8a"/>
+                    <rect x="5" y="18" width="2" height="2" fill="#fcdcb4"/><rect x="5" y="20" width="7" height="8" fill="#888"/>
+                    <rect x="8" y="20" width="1" height="8" fill="#666"/><rect x="4" y="28" width="4" height="2" fill="#4a3018"/><rect x="9" y="28" width="4" height="2" fill="#4a3018"/>
+                </svg>
+            </div>
+
+            <!-- ESCENA 1: LA PUERTA -->
+            <div id="scene-1">
+                <div class="wood-floor"></div>
+                <div id="board" class="entity" data-name="Tablón de anuncios">
+                    <svg viewBox="0 0 16 20" width="100%" height="100%">
+                        <rect x="2" y="0" width="12" height="20" fill="#5c3a21"/><rect x="0" y="2" width="16" height="16" fill="#8b5a2b"/><rect x="2" y="2" width="12" height="16" fill="#6d4622"/>
+                        <rect x="3" y="4" width="6" height="6" fill="#ddd"/><rect x="9" y="8" width="5" height="7" fill="#bbb"/>
+                        <g id="svg-sticker"><rect x="4" y="12" width="5" height="5" fill="#fff"/><rect x="6" y="13" width="1" height="3" fill="#00f"/><rect x="5" y="14" width="3" height="1" fill="#00f"/></g>
+                        <rect x="7" y="3" width="2" height="2" fill="#f00"/>
+                    </svg>
+                </div>
+                <div id="door" class="entity" data-name="Puerta de la Fortaleza">
+                    <svg viewBox="0 0 24 36" width="100%" height="100%">
+                        <path d="M0,0 h24 v36 h-4 v-32 h-16 v32 h-4 z" fill="#444"/><path d="M2,2 h20 v34 h-2 v-32 h-16 v32 h-2 z" fill="#666"/>
+                        <g id="svg-door-wood">
+                            <rect x="4" y="4" width="16" height="32" fill="#2a1008"/><rect x="6" y="6" width="12" height="30" fill="#4a3018"/>
+                            <rect x="9" y="6" width="1" height="30" fill="#2a1008"/><rect x="14" y="6" width="1" height="30" fill="#2a1008"/>
+                            <rect x="4" y="10" width="6" height="2" fill="#111"/><rect x="4" y="26" width="6" height="2" fill="#111"/>
+                            <rect x="16" y="18" width="3" height="4" fill="#888"/><rect x="17" y="19" width="1" height="2" fill="#000"/>
+                        </g>
+                        <rect id="svg-door-open" x="4" y="4" width="16" height="32" fill="#050505" style="display:none;"/>
+                    </svg>
+                </div>
+                <div id="receptionist" class="entity" data-name="Recepcionista Temible">
+                    <svg viewBox="0 0 16 28" width="100%" height="100%">
+                        <rect x="2" y="1" width="12" height="3" fill="#111"/><rect x="4" y="0" width="8" height="1" fill="#111"/><rect x="7" y="2" width="2" height="2" fill="#a00"/>
+                        <rect x="5" y="4" width="6" height="5" fill="#ddd"/><rect x="6" y="6" width="1" height="1" fill="#000"/><rect x="9" y="6" width="1" height="1" fill="#000"/><rect x="7" y="8" width="2" height="1" fill="#111"/>
+                        <g id="svg-skeleton-patch"><rect x="5" y="5" width="4" height="1" fill="#111"/><rect x="6" y="6" width="2" height="2" fill="#111"/></g>
+                        <rect x="7" y="9" width="2" height="8" fill="#aaa"/><rect x="5" y="11" width="6" height="1" fill="#ddd"/><rect x="5" y="13" width="6" height="1" fill="#ddd"/><rect x="5" y="15" width="6" height="1" fill="#ddd"/>
+                        <rect x="3" y="10" width="2" height="8" fill="#ddd"/><rect x="11" y="10" width="2" height="8" fill="#ddd"/><rect x="12" y="14" width="1" height="8" fill="#aaa"/><rect x="11" y="18" width="3" height="1" fill="#cc0"/>
+                        <rect x="5" y="18" width="2" height="9" fill="#aaa"/><rect x="9" y="18" width="2" height="9" fill="#aaa"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- ESCENA 2: RRHH Y DATOS (ALTO RIESGO) -->
+            <div id="scene-2">
+                <div class="stone-wall"></div><div class="stone-floor"></div>
+                <div id="desk" class="entity" data-name="Mesa de Caoba"></div>
+                <div id="data-book" class="entity" data-name="Conjunto de Datos de Entrenamiento">
+                    <svg viewBox="0 0 20 12" width="100%" height="100%">
+                        <rect x="1" y="1" width="18" height="10" fill="#8b5a2b" rx="1"/>
+                        <path d="M2,2 h8 v8 h-8 z" fill="#eee"/><path d="M10,2 h8 v8 h-8 z" fill="#ddd"/>
+                        <rect x="3" y="3" width="6" height="1" fill="#999"/><rect x="3" y="5" width="5" height="1" fill="#999"/><rect x="11" y="3" width="6" height="1" fill="#999"/>
+                        <rect id="svg-new-data" x="11" y="7" width="5" height="1" fill="#00f" style="display:none;"/>
+                    </svg>
+                </div>
+                <div id="hr-skull" class="entity" data-name="Cráneo Evaluador (Alto Riesgo)">
+                    <svg viewBox="0 0 20 20" width="100%" height="100%">
+                        <rect x="6" y="16" width="8" height="4" fill="#333"/><path d="M4,4 h12 v8 h-2 v4 h-8 v-4 h-2 z" fill="#ddd"/>
+                        <rect x="6" y="8" width="3" height="2" fill="#f00" id="skull-eye-1"/><rect x="11" y="8" width="3" height="2" fill="#f00" id="skull-eye-2"/>
+                        <rect x="6" y="14" width="1" height="2" fill="#000"/><rect x="9" y="14" width="1" height="2" fill="#000"/><rect x="12" y="14" width="1" height="2" fill="#000"/>
+                    </svg>
+                </div>
+                <div id="magic-barrier" class="entity" data-name="Barrera Láser Mágica">
+                    <svg viewBox="0 0 20 40" width="100%" height="100%"><rect x="0" y="0" width="20" height="40" fill="rgba(0, 255, 255, 0.3)"/><rect x="8" y="0" width="4" height="40" fill="rgba(0, 255, 255, 0.8)"/></svg>
+                </div>
+                <div id="feather" class="entity" data-name="Pluma de Cuervo">
+                    <svg viewBox="0 0 10 30" width="100%" height="100%"><path d="M5,0 Q8,10 5,20 Q2,10 5,0" fill="#222"/><rect x="4" y="20" width="2" height="10" fill="#fff"/></svg>
+                </div>
+            </div>
+
+            <!-- ESCENA 3: CALABOZOS Y ROBUSTEZ (RIESGO MÍNIMO) -->
+            <div id="scene-3">
+                <div class="stone-wall"></div><div class="iron-bars"></div><div class="stone-floor"></div>
+                <div id="safe" class="entity" data-name="Caja Fuerte Vudú">
+                    <svg viewBox="0 0 30 30" width="100%" height="100%">
+                        <rect x="2" y="2" width="26" height="26" fill="#444" stroke="#222" stroke-width="2"/>
+                        <g id="safe-door"><rect x="4" y="4" width="22" height="22" fill="#666"/><circle cx="15" cy="15" r="4" fill="#333"/><rect x="14" y="15" width="2" height="3" fill="#111"/></g>
+                        <g id="safe-open" style="display:none;"><rect x="4" y="4" width="22" height="22" fill="#111"/><rect x="10" y="18" width="10" height="8" fill="#ddd"/><rect x="12" y="20" width="6" height="2" fill="#f00"/></g>
+                    </svg>
+                </div>
+                <div id="lever" class="entity" data-name="Palanca Industrial">
+                    <svg viewBox="0 0 20 40" width="100%" height="100%">
+                        <rect x="4" y="30" width="12" height="10" fill="#555"/><rect x="6" y="26" width="8" height="4" fill="#333"/>
+                        <g id="lever-stick" transform="rotate(-20, 10, 30)"><rect x="8" y="10" width="4" height="20" fill="#888"/><circle cx="10" cy="10" r="4" fill="#d00"/></g>
+                    </svg>
+                </div>
+                <div id="parrot" class="entity" data-name="Loro-Bot Moderador (Riesgo Mínimo)">
+                    <svg viewBox="0 0 20 30" width="100%" height="100%">
+                        <rect x="9" y="20" width="2" height="10" fill="#8b5a2b"/><rect x="4" y="20" width="12" height="2" fill="#6d4622"/>
+                        <path id="parrot-body" d="M6,10 Q10,4 14,10 Q16,16 12,20 Q8,20 6,10" fill="#88aa88"/>
+                        <path d="M12,18 L16,26 L10,22 Z" fill="#668866"/><polygon points="4,10 6,8 6,12" fill="#aa8800"/><circle id="parrot-eye" cx="10" cy="9" r="1.5" fill="#ff0000"/>
+                    </svg>
+                </div>
+                <div id="stamp" class="entity" data-name="Sello Oficial de la AESIA">
+                    <svg viewBox="0 0 16 16" width="100%" height="100%"><rect x="6" y="2" width="4" height="8" fill="#8b5a2b"/><rect x="4" y="10" width="8" height="4" fill="#333"/><rect x="4" y="14" width="8" height="2" fill="#f00"/></svg>
+                </div>
+                <div id="stairs" class="entity" data-name="Pasadizo hacia las profundidades"><svg viewBox="0 0 60 120" width="100%" height="100%"><rect x="0" y="100" width="60" height="20" fill="#444" stroke="#666" stroke-width="1"/><rect x="15" y="74" width="45" height="20" fill="#444" stroke="#666" stroke-width="1"/><rect x="30" y="48" width="30" height="20" fill="#444" stroke="#666" stroke-width="1"/><rect x="45" y="22" width="15" height="20" fill="#444" stroke="#666" stroke-width="1"/><rect x="45" y="2" width="10" height="18" fill="#888" stroke="#aaa" stroke-width="1"/><text x="50" y="16" font-size="8" fill="#ffcc00" text-anchor="middle">▲</text></svg></div>
+            </div>
+
+            <!-- ESCENA 4: CÁMARA DE CONTROL MENTAL (RIESGO INADMISIBLE) -->
+            <div id="scene-4">
+                <div class="stone-wall"></div>
+                <div class="lava-floor"></div>
+
+                <div id="final-door" class="entity" data-name="Puerta a la Libertad">
+                    <svg viewBox="0 0 40 60" width="100%" height="100%">
+                        <!-- Borde de piedra -->
+                        <path d="M0,0 h40 v60 h-4 v-56 h-32 v56 h-4 z" fill="#222"/>
+                        <!-- Puerta metálica blindada -->
+                        <g id="s4-door-closed">
+                            <rect x="4" y="4" width="32" height="56" fill="#444"/>
+                            <!-- Remaches -->
+                            <circle cx="8" cy="8" r="1" fill="#111"/><circle cx="32" cy="8" r="1" fill="#111"/>
+                            <circle cx="8" cy="56" r="1" fill="#111"/><circle cx="32" cy="56" r="1" fill="#111"/>
+                            <rect x="16" y="24" width="8" height="12" fill="#222"/> <!-- Cerradura vudú -->
+                        </g>
+                        <!-- Puerta abierta -->
+                        <rect id="s4-door-open" x="4" y="4" width="32" height="56" fill="#ffffff" style="display:none; filter: drop-shadow(0 0 10px #fff);"/>
+                    </svg>
+                </div>
+
+                <div id="social-eye" class="entity" data-name="Ojo de Puntuación Ciudadana">
+                    <svg viewBox="0 0 30 50" width="100%" height="100%">
+                        <!-- Base mecánica -->
+                        <rect x="10" y="40" width="10" height="10" fill="#333"/>
+                        <rect x="12" y="30" width="6" height="10" fill="#555"/>
+                        <!-- Globo ocular -->
+                        <circle cx="15" cy="15" r="12" fill="#fff"/>
+                        <circle cx="15" cy="15" r="5" fill="#f00" style="animation: eye-pulse 1s infinite alternate;"/>
+                        <circle cx="15" cy="15" r="2" fill="#000"/>
+                        <path d="M5,15 Q15,0 25,15 Q15,30 5,15" fill="none" stroke="#222" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+        </div> <!-- Fin Viewport -->
+
+        <div id="sentence-line"></div>
+
+        <div id="ui-panel">
+            <div id="verbs">
+                <div class="verb" data-verb="Dar">Dar</div>
+                <div class="verb" data-verb="Abrir">Abrir</div>
+                <div class="verb" data-verb="Cerrar">Cerrar</div>
+                <div class="verb" data-verb="Coger">Coger</div>
+                <div class="verb" data-verb="Mirar">Mirar</div>
+                <div class="verb" data-verb="Hablar a">Hablar a</div>
+                <div class="verb" data-verb="Usar">Usar</div>
+                <div class="verb" data-verb="Empujar">Empujar</div>
+                <div class="verb" data-verb="Tirar">Tirar</div>
+                <div class="verb" data-verb="Ir a">Ir a</div>
+            </div>
+            <div id="inventory"></div>
+        </div>
+    </div>
+</div>
+
+<!-- PLANTILLAS INVENTARIO -->
+<template id="svg-chicken">
+    <svg viewBox="0 0 16 16"><rect x="6" y="2" width="4" height="8" fill="#ee0"/><rect x="7" y="1" width="2" height="1" fill="#f00"/><rect x="10" y="4" width="2" height="1" fill="#f80"/><rect x="7" y="10" width="2" height="4" fill="#f00"/><rect x="5" y="12" width="6" height="2" fill="#888"/></svg>
+</template>
+<template id="svg-sticker-inv">
+    <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" fill="#fff"/><rect x="7" y="4" width="2" height="2" fill="#00f"/><rect x="7" y="7" width="2" height="6" fill="#00f"/><rect x="4" y="3" width="2" height="2" fill="#f00"/></svg>
+</template>
+<template id="svg-feather-inv">
+    <svg viewBox="0 0 16 16"><path d="M8,2 Q12,6 8,10 Q4,6 8,2" fill="#888"/><rect x="7" y="10" width="2" height="4" fill="#fff"/></svg>
+</template>
+<template id="svg-stamp-inv">
+    <svg viewBox="0 0 16 16"><rect x="6" y="2" width="4" height="8" fill="#8b5a2b"/><rect x="4" y="10" width="8" height="4" fill="#333"/><rect x="4" y="14" width="8" height="2" fill="#f00"/></svg>
+</template>
+
+<script>
+    // --- ESTADO GLOBAL ---
+    let gameState = 'INTRO'; 
+    let currentScene = 1;
+    
+    let state = {
+        verb: null,
+        item: null,
+        inventory: [{ id: 'pollo', name: 'Pollo con polea', svg: 'svg-chicken' }],
+        flags: {
+            s1_hasSticker: false,
+            s1_isTransparent: false,
+            s1_doorOpen: false,
+            s2_hasFeather: false,
+            s2_biasMitigated: false,
+            s3_parrotBroken: false,
+            s3_safeOpen: false,
+            s3_hasStamp: false,
+            s4_eyeDestroyed: false,
+            s4_doorOpen: false
+        },
+        isSpeaking: false,
+        isMoving: false
+    };
+
+    const introScreen = document.getElementById('intro-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const creditsScreen = document.getElementById('credits-screen');
+    const sentenceLine = document.getElementById('sentence-line');
+    const dialogueBox = document.getElementById('dialogue-box');
+    const inventoryContainer = document.getElementById('inventory');
+    const guybrush = document.getElementById('guybrush');
+
+    // --- REGLAS ---
+    document.getElementById('rules-btn').addEventListener('click', (e) => {
+        e.stopPropagation(); document.getElementById('rules-modal').style.display = 'flex';
+    });
+    document.getElementById('close-rules').addEventListener('click', (e) => {
+        e.stopPropagation(); document.getElementById('rules-modal').style.display = 'none';
+    });
+    document.getElementById('rules-modal').addEventListener('click', (e) => e.stopPropagation());
+
+    introScreen.addEventListener('click', () => { if (gameState === 'INTRO') iniciarJuego(); });
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space' && gameState === 'INTRO') iniciarJuego(); });
+
+    function iniciarJuego() {
+        gameState = 'PLAYING';
+        introScreen.style.opacity = '0';
+        setTimeout(() => {
+            introScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            setTimeout(() => say("Guybrush", "El Reglamento exige Transparencia. Ese 'humano' de la puerta me resulta sospechoso..."), 800);
+        }, 1500); 
+    }
+
+    // --- INVENTARIO ---
+    function updateInventory() {
+        inventoryContainer.innerHTML = '';
+        state.inventory.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'inv-item'; div.dataset.name = item.name;
+            div.appendChild(document.getElementById(item.svg).content.cloneNode(true));
+            const span = document.createElement('span'); span.innerText = item.name; div.appendChild(span);
+            div.onclick = () => handleInventoryClick(item.name);
+            inventoryContainer.appendChild(div);
+        });
+    }
+    updateInventory();
+
+    // --- SENTENCE LINE ---
+    function updateSentence(hoverTarget = "") {
+        if (state.isSpeaking || gameState !== 'PLAYING') return;
+        let text = "";
+        if (state.verb) text += state.verb + " ";
+        if (state.item) {
+            text += state.item + " ";
+            if (state.verb === "Usar" || state.verb === "Dar") text += "en ";
+        }
+        if (hoverTarget) text += hoverTarget;
+        sentenceLine.innerText = text;
+    }
+
+    document.querySelectorAll('.verb').forEach(v => {
+        v.onclick = () => {
+            if (state.isSpeaking) return;
+            document.querySelectorAll('.verb').forEach(el => el.classList.remove('active'));
+            v.classList.add('active'); state.verb = v.dataset.verb; state.item = null; updateSentence();
+        };
+    });
+
+    function handleInventoryClick(itemName) {
+        if (state.isSpeaking || !state.verb) return;
+        if (state.verb === "Mirar") {
+            if(itemName === 'Pegatina AESIA') say("Guybrush", "Un aviso legal europeo. Dice: 'ADVERTENCIA: Usted interactúa con una IA.'");
+            if(itemName === 'Pollo con polea') say("Guybrush", "Es un clásico. Pero inútil contra algoritmos.");
+            if(itemName === 'Pluma') say("Guybrush", "Una pluma de auditor. Útil para reescribir bases de datos pirata.");
+            if(itemName === 'Sello Oficial AESIA') say("Guybrush", "Con este sello puedo certificar o suspender cualquier IA de la isla.");
+            resetSentence(); return;
+        }
+        if (state.verb === "Usar" || state.verb === "Dar") { state.item = itemName; updateSentence(); }
+    }
+
+    document.querySelectorAll('.entity').forEach(entity => {
+        entity.onmouseover = () => updateSentence(entity.dataset.name);
+        entity.onmouseout = () => updateSentence();
+        entity.onclick = () => executeAction(entity.id, entity.dataset.name);
+    });
+
+    function resetSentence() {
+        state.verb = null; state.item = null;
+        document.querySelectorAll('.verb').forEach(el => el.classList.remove('active'));
+        updateSentence();
+    }
+
+    function moveGuybrush(targetId, callback) {
+        if (state.isMoving) return;
+        state.isMoving = true;
+        const target = document.getElementById(targetId);
+        const targetRect = target.getBoundingClientRect();
+        const containerRect = document.getElementById('viewport').getBoundingClientRect();
+        let destinationX = (targetRect.left - containerRect.left) - 60;
+        guybrush.style.left = destinationX + 'px';
+        setTimeout(() => { state.isMoving = false; callback(); }, 1000);
+    }
+
+    async function say(character, text, colorCode = "guybrush") {
+        return new Promise(resolve => {
+            state.isSpeaking = true; sentenceLine.innerText = "";
+            const color = colorCode === "guybrush" ? "var(--guybrush-color)" : colorCode === "lechuck" ? "var(--lechuck-color)" : "var(--system-color)";
+            dialogueBox.style.color = color; dialogueBox.innerHTML = text;
+            const _dur = Math.max(2000, text.length * 60);
+            const _t = setTimeout(() => { dialogueBox.innerHTML = ""; dialogueBox.onclick = null; state.isSpeaking = false; resetSentence(); resolve(); }, _dur);
+            dialogueBox.onclick = () => { clearTimeout(_t); dialogueBox.innerHTML = ""; dialogueBox.onclick = null; state.isSpeaking = false; resetSentence(); resolve(); };
+        });
+    }
+
+    // --- TRANSICIONES ---
+    async function transitionToScene2() {
+        await say("Guybrush", "Adentrándome en las oscuras profundidades de la fortaleza...");
+        document.getElementById('scene-1').style.display = 'none';
+        document.getElementById('scene-2').style.display = 'block';
+        currentScene = 2;
+        guybrush.style.left = '20px'; 
+        setTimeout(async () => {
+            await say("Guybrush", "Un Cráneo Evaluador de Currículums... y una barrera mágica. Apesta a IA de Alto Riesgo.");
+        }, 1000);
+    }
+
+    async function transitionToScene3() {
+        await say("Guybrush", "Descendiendo a las mazmorras...");
+        document.getElementById('scene-2').style.display = 'none';
+        document.getElementById('scene-3').style.display = 'block';
+        currentScene = 3;
+        guybrush.style.left = '20px'; 
+        setTimeout(async () => {
+            await say("Guybrush", "Un Loro-Bot custodiando una palanca. Tendré que lidiar con sus algoritmos.");
+        }, 1000);
+    }
+
+    async function transitionToScene4() {
+        await say("Guybrush", "Por este pasadizo... ¡hace mucho calor aquí abajo!");
+        document.getElementById('scene-3').style.display = 'none';
+        document.getElementById('scene-4').style.display = 'block';
+        currentScene = 4;
+        guybrush.style.left = '20px'; 
+        setTimeout(async () => {
+            await say("Guybrush", "La antesala de LeChuck. Y ese ojo gigante... me está escaneando.");
+        }, 1000);
+    }
+
+    async function transitionToCredits() {
+        gameState = 'CREDITS';
+        gameScreen.style.display = 'none';
+        creditsScreen.style.display = 'block';
+        // Iniciar la animación de créditos por CSS automáticamente
+    }
+
+    // --- RESOLUCIÓN DE PUZLES ---
+    async function executeAction(targetId, targetName) {
+        if (!state.verb || state.isSpeaking || state.isMoving) return;
+        const verb = state.verb; const item = state.item;
+
+        moveGuybrush(targetId, async () => {
+            // ==========================================
+            // ESCENA 1: LA PUERTA Y LA TRANSPARENCIA
+            // ==========================================
+            if (currentScene === 1) {
+                if (targetId === 'receptionist') {
+                    if (verb === 'Mirar') {
+                        if(!state.flags.s1_isTransparent) {
+                            await say("Guybrush", "Parece un pirata humano... aunque no respira y repite patrones.");
+                        } else {
+                            await say("Guybrush", "Es un bot conversacional. La pegatina desactivó su capa de suplantación.");
+                        }
+                    } 
+                    else if (verb === 'Hablar a') {
+                        if(!state.flags.s1_isTransparent) {
+                            await say("Recepcionista", "¡ARRR! ¡Soy el pirata más sanguinario! ¡Nadie pasa!", "lechuck");
+                            await say("Guybrush", "Tu árbol de decisiones de diálogo es muy predecible.");
+                        } else {
+                            await say("Recepcionista", "Bip. Boop. Cumpliendo Artículo 50. Soy una IA. ¿En qué ayudo?", "system");
+                        }
+                    } 
+                    else if (verb === 'Usar' && item === 'Pegatina AESIA') {
+                        if(!state.flags.s1_isTransparent) {
+                            await say("Guybrush", "Esto es por la obligación de transparencia del Reglamento IA.");
+                            state.inventory = state.inventory.filter(i => i.id !== 'pegatina'); updateInventory();
+                            
+                            await say("Recepcionista", "¡ERROR! ¡Directiva de camuflaje humano vulnerada por parche legal!", "lechuck");
+                            
+                            document.getElementById('svg-skeleton-patch').style.display = 'none';
+                            document.getElementById('receptionist').dataset.name = "Bot Conversacional (Legal)";
+                            state.flags.s1_isTransparent = true;
+                            
+                            await say("Recepcionista", "Protocolo transparente activado. Saludos, usuario.", "system");
+                        } else {
+                            await say("Guybrush", "Ya es lo suficientemente transparente.");
+                        }
+                    } 
+                    else await say("Guybrush", "El algoritmo no procesa esa interacción.");
+                }
+                else if (targetId === 'door') {
+                    if (verb === 'Ir a' || verb === 'Abrir' || verb === 'Usar') {
+                        if (!state.flags.s1_isTransparent) {
+                            await say("Recepcionista", "¡Alto! ¡Solo humanos con autorización de LeChuck!", "lechuck");
+                        } else if (!state.flags.s1_doorOpen) {
+                            await say("Guybrush", "El bot ya no simula agresividad. Procedo a abrir.");
+                            state.flags.s1_doorOpen = true;
+                            document.getElementById('svg-door-wood').style.display = 'none';
+                            document.getElementById('svg-door-open').style.display = 'block';
+                            await say("Guybrush", "¡Abierta! Hacia el filtro de RRHH de Alto Riesgo.");
+                            transitionToScene2();
+                        } else {
+                            await say("Guybrush", "Ya la he abierto.");
+                            transitionToScene2();
+                        }
+                    } 
+                    else if (verb === 'Mirar') await say("Guybrush", "Una puerta sólida codificada con magia negra.");
+                    else await say("Guybrush", "No tiene sentido hacer eso con una puerta.");
+                }
+                else if (targetId === 'board') {
+                    if (verb === 'Mirar') await say("Guybrush", "Avisos legales de la Fortaleza. Hay una pegatina de la AESIA.");
+                    else if (verb === 'Coger') {
+                        if (!state.flags.s1_hasSticker) {
+                            await say("Guybrush", "Me llevo esta 'Pegatina AESIA'. Seguro que es útil.");
+                            state.flags.s1_hasSticker = true;
+                            document.getElementById('svg-sticker').style.display = 'none';
+                            state.inventory.push({ id: 'pegatina', name: 'Pegatina AESIA', svg: 'svg-sticker-inv' }); updateInventory();
+                        } else await say("Guybrush", "Solo quedan memorandos aburridos sobre la Ley de Datos.");
+                    } else await say("Guybrush", "Prefiero no tocar más de lo necesario.");
+                }
+            }
+            
+            // ==========================================
+            // ESCENA 2: RRHH, ALTO RIESGO Y SESGOS
+            // ==========================================
+            else if (currentScene === 2) {
+                if (targetId === 'hr-skull') {
+                    if (verb === 'Mirar') {
+                        await say("Guybrush", "Es el infame 'Cráneo de Adquisición de Talento'.");
+                        await say("Guybrush", "Un sistema de IA de Alto Riesgo que evalúa quién es digno de servir a LeChuck.");
+                    }
+                    else if (verb === 'Hablar a') {
+                        if (!state.flags.s2_biasMitigated) {
+                            await say("Guybrush", "¡Hola! Vengo a por el puesto de pirata sanguinario.");
+                            await say("Cráneo Evaluador", "ESCANEO BIOMÉTRICO COMPLETADO... ERROR. DETECTADA ACTIVIDAD CARDÍACA.", "system");
+                            await say("Cráneo Evaluador", "SOLO CONTRATAMOS PERSONAL CON UN 0% DE CONSTANTES VITALES.", "system");
+                            await say("Guybrush", "¡Eso es discriminación algorítmica! ¡Tu conjunto de datos está sesgado hacia los no-muertos!");
+                        } else {
+                            await say("Cráneo Evaluador", "BIP. DATOS RECALCULADOS. LA DIVERSIDAD VITAL AHORA ES ACEPTABLE.", "system");
+                            await say("Guybrush", "El Reglamento de IA siempre triunfa.");
+                        }
+                    } else await say("Guybrush", "Creo que no tiene ranura para que le introduzca eso.");
+                }
+                else if (targetId === 'magic-barrier') {
+                    if (verb === 'Mirar') {
+                        if (!state.flags.s2_biasMitigated) await say("Guybrush", "Una barrera mágica impulsada por el sesgo del Cráneo. Bloquea a los 'vivos'.");
+                        else await say("Guybrush", "La barrera ha desaparecido. Ha dejado al descubierto un pasadizo oscuro hacia las mazmorras.");
+                    }
+                    else if (verb === 'Abrir' || verb === 'Empujar' || verb === 'Tirar' || verb === 'Usar') {
+                        if (!state.flags.s2_biasMitigated) {
+                            await say("Guybrush", "¡Ouch! Quema.");
+                            await say("Cráneo Evaluador", "ACCESO DENEGADO. NO CUMPLES EL PERFIL ESTADÍSTICO DE LA TRIPULACIÓN.", "system");
+                        } else {
+                            await say("Guybrush", "La barrera está desactivada. El camino hacia LeChuck está despejado.");
+                            transitionToScene3();
+                        }
+                    } else await say("Guybrush", "Mejor no toco ese láser con esto.");
+                }
+                else if (targetId === 'feather') {
+                    if (verb === 'Mirar') await say("Guybrush", "Una pluma de cuervo. Quizás haya algo de tinta de calamar seca.");
+                    else if (verb === 'Coger') {
+                        if (!state.flags.s2_hasFeather) {
+                            await say("Guybrush", "Me la llevo. Una herramienta indispensable para todo auditor manual.");
+                            document.getElementById('feather').style.display = 'none';
+                            state.flags.s2_hasFeather = true;
+                            state.inventory.push({ id: 'pluma', name: 'Pluma', svg: 'svg-feather-inv' }); updateInventory();
+                        }
+                    } else await say("Guybrush", "Es solo una pluma.");
+                }
+                else if (targetId === 'data-book') {
+                    if (verb === 'Mirar') {
+                        if (!state.flags.s2_biasMitigated) {
+                            await say("Guybrush", "Es el 'Necronomicón de Recursos Humanos'. El conjunto de datos de entrenamiento.");
+                            await say("Guybrush", "Solo hay perfiles de esqueletos, zombis y algún fantasma despistado. Pésima Gobernanza de Datos.");
+                        } else {
+                            await say("Guybrush", "El dataset ahora cuenta con una representación justa y equitativa de piratas con pulso.");
+                        }
+                    }
+                    else if (verb === 'Usar' && item === 'Pluma') {
+                        if (!state.flags.s2_biasMitigated) {
+                            await say("Guybrush", "Veamos... Artículo 10: Gobernanza de datos y mitigación de sesgos.");
+                            await say("Guybrush", "Añadiré unos cuantos miles de perfiles de piratas vivos, sanos y patosos como yo.");
+                            
+                            document.getElementById('svg-new-data').style.display = 'block';
+                            document.getElementById('skull-eye-1').setAttribute('fill', '#0f0');
+                            document.getElementById('skull-eye-2').setAttribute('fill', '#0f0');
+                            
+                            await say("Cráneo Evaluador", "¡ALERTA! NUEVOS DATOS INYECTADOS. RECALCULANDO PESOS SINÁPTICOS...", "system");
+                            
+                            document.getElementById('magic-barrier').innerHTML = '<svg viewBox="0 0 20 40" width="100%" height="100%"><rect x="0" y="0" width="20" height="40" fill="#0a0a0a" stroke="#222" stroke-width="1"/></svg>';
+                            document.getElementById('magic-barrier').style.animation = 'none';
+                            document.getElementById('magic-barrier').style.opacity = '1';
+                            document.getElementById('magic-barrier').dataset.name = 'Pasadizo oscuro';
+                            state.flags.s2_biasMitigated = true;
+                            
+                            await say("Cráneo Evaluador", "ACTUALIZACIÓN COMPLETADA. BARRERA DESACTIVADA PARA CANDIDATOS VIVOS.", "system");
+                            await say("Guybrush", "Auditoría superada. Otro sistema de Alto Riesgo bajo control legal.");
+                        } else {
+                            await say("Guybrush", "El dataset ya cumple con los estrictos criterios de calidad de la AESIA.");
+                        }
+                    } else if (verb === 'Coger') {
+                        await say("Guybrush", "Pesa demasiado. Está lleno de datos no estructurados.");
+                    } else await say("Guybrush", "No puedo alterar los datos de entrenamiento con eso.");
+                }
+                else if (targetId === 'desk') {
+                    if (verb === 'Mirar') await say("Guybrush", "Un robusto escritorio de auditor. O de pirata contable, no estoy seguro.");
+                    else if (verb === 'Hablar a') await say("Guybrush", "Aún no estoy tan loco como para hablar con los muebles.");
+                    else await say("Guybrush", "No creo que deba hacer eso.");
+                }
+            }
+
+            // ==========================================
+            // ESCENA 3: ROBUSTEZ Y RIESGO MÍNIMO
+            // ==========================================
+            else if (currentScene === 3) {
+                if (targetId === 'parrot') {
+                    if (verb === 'Mirar') {
+                        if (!state.flags.s3_parrotBroken) {
+                            await say("Guybrush", "Un Loro-Bot de moderación de lenguaje. Filtra palabrotas y spam.");
+                            await say("Guybrush", "Estos filtros se clasifican como 'Riesgo Mínimo' en el Reglamento Europeo de IA.");
+                            await say("Guybrush", "Sin obligaciones legales de auditoría formal... y se nota. Nadie le ha probado con insultos de pirata.");
+                        } else {
+                            await say("Guybrush", "El Loro-Bot se ha quedado colgado procesando mi lógica pirata. Pobre pajarito algorítmico.");
+                        }
+                    }
+                    else if (verb === 'Hablar a') {
+                        if (!state.flags.s3_parrotBroken) {
+                            await say("Guybrush", "¡Hola, pajarraco algorítmico!");
+                            await say("Loro-Bot", "¡SQUAWK! SISTEMA DE MODERACIÓN ACTIVO. CERO TOLERANCIA A INSULTOS PIRATAS. ¡SQUAWK!", "system");
+                            await say("Guybrush", "No puedo invocar artículos de la ley aquí. Tendré que usar un ataque de 'Prompt Injection'...");
+                            await say("Guybrush", "Un insulto que esté fuera de su distribución de datos de entrenamiento (Out-of-Distribution).");
+                            await say("Guybrush", "Allá voy: ¡Tu modelo fundacional tiene menos parámetros que la receta de un Grog sin alcohol!");
+                            await say("Loro-Bot", "¡SQUAWK! ANALIZANDO... ¿GROG? ¿PARÁMETROS? VECTOR NO ENCONTRADO EN EL ESPACIO LATENTE...", "system");
+                            await say("Loro-Bot", "ERROR 404: LÓGICA ABSURDA. ¡SQUAWK! ¡DESBORDAMIENTO DE PILA! ¡PÁNICO EN EL KERNEL!", "system");
+                            
+                            document.getElementById('parrot-eye').setAttribute('fill', '#000');
+                            document.getElementById('parrot-body').setAttribute('fill', '#333');
+                            state.flags.s3_parrotBroken = true;
+                            
+                            await say("Guybrush", "Ja. Los sistemas de Riesgo Mínimo son de uso libre. El Reglamento no les exige pruebas exhaustivas. Ellos solitos se encargan de demostrar por qué quizás deberían.");
+                        } else {
+                            await say("Guybrush", "Solo emite un leve zumbido de estática y olor a silicio quemado.");
+                        }
+                    }
+                    else if (verb === 'Usar' && item === 'Pollo con polea') {
+                        await say("Guybrush", "A los loros mecánicos no les gusta el pollo de goma. Créeme, lo he intentado.");
+                    }
+                    else await say("Guybrush", "El loro ignora por completo esa interacción.");
+                }
+                else if (targetId === 'lever') {
+                    if (verb === 'Mirar') {
+                        await say("Guybrush", "Una palanca industrial. Parece que controla el mecanismo de esa caja fuerte vudú.");
+                    }
+                    else if (verb === 'Tirar' || verb === 'Empujar' || verb === 'Usar') {
+                        if (!state.flags.s3_parrotBroken) {
+                            await say("Guybrush", "No puedo. El Loro-Bot está programado para picotearme la mano si me acerco a la palanca.");
+                        } else if (!state.flags.s3_safeOpen) {
+                            await say("Guybrush", "¡Allá vamos! Ya no hay moderador que me detenga.");
+                            
+                            document.getElementById('lever-stick').setAttribute('transform', 'rotate(40, 10, 30)');
+                            document.getElementById('safe-door').style.display = 'none';
+                            document.getElementById('safe-open').style.display = 'block';
+                            document.getElementById('stamp').style.display = 'block';
+                            state.flags.s3_safeOpen = true;
+                            
+                            await say("Guybrush", "¡CLACK! La caja fuerte vudú se ha abierto de par en par.");
+                        } else {
+                            await say("Guybrush", "Ya tiré de la palanca. La caja ya está abierta.");
+                        }
+                    }
+                    else await say("Guybrush", "Solo puedo tirar de ella o empujarla.");
+                }
+                else if (targetId === 'safe') {
+                    if (verb === 'Mirar') {
+                        if (!state.flags.s3_safeOpen) await say("Guybrush", "Una caja fuerte blindada. LeChuck guarda aquí cosas importantes.");
+                        else await say("Guybrush", "La caja está abierta. Hay algo brillante dentro.");
+                    }
+                    else if (verb === 'Abrir') {
+                        if (!state.flags.s3_safeOpen) await say("Guybrush", "Está cerrada a cal y canto. Esa palanca debe ser el mecanismo de apertura.");
+                        else await say("Guybrush", "Ya está abierta.");
+                    }
+                    else await say("Guybrush", "No soy ladrón de cajas fuertes. Soy auditor.");
+                }
+                else if (targetId === 'stamp') {
+                    if (verb === 'Mirar') await say("Guybrush", "¡Es un Sello Oficial de la AESIA! Con esto puedo prohibir IA de Riesgo Inadmisible.");
+                    else if (verb === 'Coger') {
+                        if (!state.flags.s3_hasStamp) {
+                            await say("Guybrush", "¡Un Sello Oficial adquirido! Ahora poseo el poder absoluto de la burocracia europea.");
+                            document.getElementById('stamp').style.display = 'none';
+                            state.flags.s3_hasStamp = true;
+                            state.inventory.push({ id: 'sello', name: 'Sello Oficial AESIA', svg: 'svg-stamp-inv' }); updateInventory();
+                        }
+                    }
+                    else await say("Guybrush", "Eso mancharía el sello de tinta roja.");
+                }
+                else if (targetId === 'stairs') {
+                    if (verb === 'Ir a' || verb === 'Abrir' || verb === 'Usar') {
+                        if (state.flags.s3_hasStamp) {
+                            transitionToScene4();
+                        } else {
+                            await say("Guybrush", "No debería seguir bajando sin llevarme todo lo útil de esta habitación.");
+                        }
+                    } else if (verb === 'Mirar') await say("Guybrush", "Unas escaleras lúgubres que descienden a las entrañas de la isla.");
+                    else await say("Guybrush", "No es momento de hacer payasadas en las escaleras.");
+                }
+            }
+
+            // ==========================================
+            // ESCENA 4: SCORING SOCIAL Y RIESGO INADMISIBLE
+            // ==========================================
+            else if (currentScene === 4) {
+                if (targetId === 'social-eye') {
+                    if (verb === 'Mirar') {
+                        if (!state.flags.s4_eyeDestroyed) {
+                            await say("Guybrush", "Una IA de Clasificación Ciudadana (Social Scoring) masiva. Manipula comportamientos...");
+                            await say("Guybrush", "Según el Artículo 5 del Reglamento de IA, esto es 'Riesgo Inadmisible'. ¡Está totalmente prohibido!");
+                        } else {
+                            await say("Guybrush", "El Ojo yace apagado, víctima de una orden de cese de operaciones de la AESIA.");
+                        }
+                    }
+                    else if (verb === 'Hablar a') {
+                        if (!state.flags.s4_eyeDestroyed) {
+                            await say("Ojo de Puntuación", "ALTO. CIUDADANO THREEPWOOD. ESCANEO DE CONDUCTA SOCIAL INICIADO.", "system");
+                            await say("Ojo de Puntuación", "PUNTUACIÓN SOCIAL: -9999. MOTIVOS: PIRATERÍA, SAQUEO Y ROBO DE POLLOS DE GOMA.", "system");
+                            await say("Guybrush", "¡Ey! El pollo me lo prestaron indefinidamente.");
+                            await say("Ojo de Puntuación", "ESTADO: CIUDADANO PELIGROSO. INICIANDO PROTOCOLO DE MANIPULACIÓN SUBLIMINAL...", "system");
+                            await say("Guybrush", "¡Manipulación y Social Scoring! ¡Esta IA es el demonio regulatorio encarnado!");
+                        } else {
+                            await say("Guybrush", "Hola, cacharro frito.");
+                        }
+                    }
+                    else if (verb === 'Usar' && item === 'Sello Oficial AESIA') {
+                        if (!state.flags.s4_eyeDestroyed) {
+                            await say("Guybrush", "Con el poder conferido a mí por la Agencia Española de Supervisión de Inteligencia Artificial...");
+                            await say("Guybrush", "¡Eres RIESGO INADMISIBLE por el Artículo 5 del Reglamento Europeo de IA! ¡Llevas prohibido desde agosto de 2024!");
+                            
+                            // Animación de destrucción
+                            document.getElementById('social-eye').style.transform = "rotate(45deg) translateY(50px)";
+                            document.getElementById('social-eye').style.filter = "grayscale(1) brightness(0.2)";
+                            
+                            await say("Ojo de Puntuación", "¡ERROR! APLICACIÓN DIRECTA DEL REGLAMENTO DETECTADA... SIN POSIBILIDAD DE RECURSO...", "system");
+                            await say("Ojo de Puntuación", "MULTA DEL 7% DE FACTURACIÓN GLOBAL EN CURSO... INICIANDO AUTODESTRUCCIÓN BANCARIA PARA EVITAR LA BANCARROTA...", "system");
+                            
+                            state.flags.s4_eyeDestroyed = true;
+                            
+                            await say("Guybrush", "Pobre infeliz. La burocracia europea es más letal que la magia vudú negra.");
+                        } else {
+                            await say("Guybrush", "Ya lo clausuré. Una vez que usas el sello, no hay vuelta atrás.");
+                        }
+                    }
+                    else if (verb === 'Usar' && item === 'Pollo con polea') {
+                        await say("Guybrush", "Intento colgarlo de su iris... no, es demasiado asqueroso.");
+                    }
+                    else await say("Guybrush", "Creo que ese monolito de control social no es receptivo a eso.");
+                }
+                else if (targetId === 'final-door') {
+                    if (verb === 'Mirar') {
+                        await say("Guybrush", "La majestuosa Puerta de la Libertad. Está sellada por el Ojo.");
+                    }
+                    else if (verb === 'Ir a' || verb === 'Abrir' || verb === 'Usar') {
+                        if (!state.flags.s4_eyeDestroyed) {
+                            await say("Guybrush", "Está bloqueada magnéticamente por la red de Scoring Social.");
+                            await say("Ojo de Puntuación", "PERMISO DENEGADO. MEJORE SU PUNTUACIÓN CIUDADANA PARA SALIR.", "system");
+                        } else if (!state.flags.s4_doorOpen) {
+                            await say("Guybrush", "Al romperse el sistema de clasificación, la puerta se ha desbloqueado de golpe.");
+                            
+                            document.getElementById('s4-door-closed').style.display = 'none';
+                            document.getElementById('s4-door-open').style.display = 'block';
+                            state.flags.s4_doorOpen = true;
+                            
+                            await say("Guybrush", "¡La auditoría ha terminado! Es hora de ir a recoger mi acreditación.");
+                            transitionToCredits();
+                        } else {
+                            transitionToCredits();
+                        }
+                    }
+                    else await say("Guybrush", "La fuerza bruta no funciona con el acero pirata.");
+                }
+            }
+
+            // === COMUNES PARA TODAS LAS ESCENAS ===
+            if (targetId === 'guybrush') {
+                if (verb === 'Mirar') await say("Guybrush", "Soy Guybrush Threepwood. ¡Temible auditor de IA!");
+                else if (verb === 'Hablar a') await say("Guybrush", "Hola, yo.");
+            }
+            resetSentence();
+        });
+    }
+</script>
+</body>
+</html>
