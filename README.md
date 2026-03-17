@@ -4,6 +4,8 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+![Preview](./AI_challenge__thumbnail.png)
+
 Este repositorio contiene el **minijuego de aventura gráfica interactiva** que he desarrollado para divulgar y auditar el cumplimiento del **Reglamento Europeo de Inteligencia Artificial (RIA)**.
 
 > **Nota:** Este proyecto demuestra la viabilidad de crear recursos educativos y de concienciación legal altamente interactivos utilizando metodologías íntegras de Inteligencia Artificial (Vibe Coding).
