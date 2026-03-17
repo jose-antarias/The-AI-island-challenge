@@ -37,18 +37,20 @@ Este proyecto es un caso práctico en el que quería probar mis habilidades en *
 
 ## 💻 Instalación y uso local
 
-Para ejecutar este proyecto en tu entorno local, al ser un archivo autocontenido, el proceso es muy sencillo:
+🎮 [**Jugar online directamente en el navegador**](https://islandchallengeai.vercel.app/)
+
+Para ejecutar este proyecto en tu entorno local:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/jose-antarias/The-AI-Island-Challenge.git
+   git clone https://github.com/jose-antarias/The-AI-island-challenge.git
    ```
 2. Navega al directorio del proyecto:
    ```bash
-   cd The-AI-Island-Challenge
+   cd The-AI-Island-challenge
    ```
 3. Ejecuta el juego:
-   * Simplemente abre el archivo `The-ai-challenge-FINAL.html` en tu navegador web favorito (Chrome, Firefox, Edge, Safari). No requiere instalación de dependencias ni servidor local.
+   * Abre el archivo index.html en tu navegador (Chrome, Firefox, Edge, Safari). No requiere instalación de dependencias ni servidor local.
 
 ## 👨‍💻 Autor
 
