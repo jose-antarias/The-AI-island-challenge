@@ -61,6 +61,11 @@ Para ejecutar este proyecto en tu entorno local:
 3. Ejecuta el juego:
    * Abre el archivo index.html en tu navegador (Chrome, Firefox, Edge, Safari). No requiere instalación de dependencias ni servidor local.
 
+## 📜 Licencia
+
+Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](./LICENSE) incluido en el repositorio para más detalles.
+
+
 ## 👨‍💻 Autor
 
 **Jose Antonio Arias Lombardero**
