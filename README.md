@@ -52,7 +52,7 @@ Para ejecutar este proyecto en tu entorno local:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/jose-antarias/The-AI-island-challenge.git
+   git clone https://github.com/ariaslombardero/The-AI-island-challenge.git
    ```
 2. Navega al directorio del proyecto:
    ```bash
@@ -73,4 +73,4 @@ Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](./LI
 
 Esta aplicación forma parte de un portfolio de soluciones tecnológicas conceptualizadas, desarrolladas y desplegadas en entornos cloud para su aplicación en el sector público. Mi objetivo es demostrar cómo el uso estratégico de modelos avanzados de IA (Vibe Coding) puede escalar radicalmente la digitalización, la operatividad y la alfabetización tecnológica de la Administración.
 
-🔗 [Consulta mi portfolio completo de aplicaciones y trayectoria profesional](https://ja-lombardero.vercel.app/)
+🔗 [Consulta mi portfolio completo de aplicaciones y trayectoria profesional](https://ariaslombardero.es/)
